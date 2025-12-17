@@ -1,0 +1,154 @@
+# ============================================================================
+# LVL-CODES: Database Configuration
+# ============================================================================
+# This file contains database connection settings for the sales data warehouse
+# and any additional data sources.
+#
+# SECURITY NOTE: Sensitive values (passwords, API keys) should be stored in
+# environment variables (.env file) and referenced here using ${VAR_NAME} syntax
+# ============================================================================
+
+# ============================================================================
+# PRIMARY DATA WAREHOUSE
+# ============================================================================
+data_warehouse:
+  # Database type: postgresql, mysql, mssql, oracle
+  type: ${DB_TYPE:postgresql}
+
+  # Connection parameters
+  host: ${DB_HOST:localhost}
+  port: ${DB_PORT:5432}
+  database: ${DB_NAME:sales_dw}
+  schema: ${DB_SCHEMA:public}
+
+  # Authentication (credentials from environment variables)
+  user: ${DB_USER}
+  password: ${DB_PASSWORD}
+
+  # Connection pool settings for optimal performance
+  pool:
+    # Number of connections to maintain in the pool
+    size: ${DB_POOL_SIZE:10}
+
+    # Maximum overflow beyond pool_size
+    max_overflow: ${DB_MAX_OVERFLOW:20}
+
+    # Number of seconds to wait before giving up on getting a connection
+    timeout: ${DB_POOL_TIMEOUT:30}
+
+    # Recycle connections after this many seconds (prevents stale connections)
+    recycle: ${DB_POOL_RECYCLE:3600}
+
+  # Query optimization settings
+  query:
+    # Enable query result caching
+    cache_enabled: true
+
+    # Cache TTL in seconds
+    cache_ttl: 3600
+
+    # Maximum number of rows to fetch at once
+    fetch_size: 10000
+
+# ============================================================================
+# SQL SERVER (Alternative/Additional Data Source)
+# ============================================================================
+sql_server:
+  enabled: false  # Set to true if using SQL Server
+  driver: "{ODBC Driver 17 for SQL Server}"
+  host: ${MSSQL_HOST:localhost}
+  port: ${MSSQL_PORT:1433}
+  database: ${MSSQL_DATABASE:sales_db}
+  user: ${MSSQL_USER}
+  password: ${MSSQL_PASSWORD}
+  trust_server_certificate: true  # For self-signed certificates
+
+# ============================================================================
+# DATA WAREHOUSE TABLES/VIEWS
+# ============================================================================
+# Define the main tables and views in your data warehouse
+tables:
+  # Historical sales transactions
+  sales_transactions:
+    name: fact_sales
+    schema: public
+    description: "Daily sales transactions with returns"
+
+  # Product master data
+  products:
+    name: dim_products
+    schema: public
+    description: "Product hierarchy: category, subgroup, SKU"
+
+  # Geographic dimensions
+  geography:
+    name: dim_geography
+    schema: public
+    description: "Regions, territories, stores"
+
+  # Sales channels
+  channels:
+    name: dim_channels
+    schema: public
+    description: "Retail, e-commerce, wholesale, distribution"
+
+  # Date/time dimension
+  calendar:
+    name: dim_calendar
+    schema: public
+    description: "Date dimension with fiscal calendar"
+
+  # Inventory/stock data
+  inventory:
+    name: fact_inventory
+    schema: public
+    description: "Daily stock levels by SKU and location"
+
+  # Returns data
+  returns:
+    name: fact_returns
+    schema: public
+    description: "Product returns by reason code"
+
+  # Promotional calendar
+  promotions:
+    name: fact_promotions
+    schema: public
+    description: "Promotional campaigns and events"
+
+# ============================================================================
+# DATA REFRESH SCHEDULE
+# ============================================================================
+refresh_schedule:
+  # How often to refresh data from source systems
+  sales_transactions: "daily"      # Daily at 2 AM
+  inventory: "daily"                # Daily at 3 AM
+  products: "weekly"                # Weekly on Sunday
+  geography: "monthly"              # Monthly on 1st
+  channels: "monthly"               # Monthly on 1st
+
+# ============================================================================
+# BACKUP CONFIGURATION
+# ============================================================================
+backup:
+  enabled: true
+  path: ${BACKUP_PATH:./backups/}
+  retention_days: 30
+  schedule: "daily"  # Daily at 2 AM
+
+# ============================================================================
+# DATA QUALITY RULES
+# ============================================================================
+data_quality:
+  # Minimum data completeness percentage
+  min_completeness: 95.0
+
+  # Maximum allowed duplicate percentage
+  max_duplicates: 1.0
+
+  # Outlier detection threshold (z-score)
+  outlier_threshold: 3.0
+
+  # Date range validation
+  min_date: "2021-01-01"
+  max_date: "2030-12-31"

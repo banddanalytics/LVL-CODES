@@ -1,0 +1,372 @@
+# ============================================================================
+# LVL-CODES: Sales Targets Configuration
+# ============================================================================
+# This file contains settings for target allocation, growth objectives,
+# constraints, and dynamic adjustment mechanisms for 2026 sales targets.
+# ============================================================================
+
+# ============================================================================
+# GROWTH TARGET SETTINGS
+# ============================================================================
+growth_targets:
+  # Base year for comparison (typically the previous year)
+  base_year: 2025
+
+  # Target forecast year
+  forecast_year: 2026
+
+  # Minimum net growth target (after returns)
+  # 0.16 = 16% growth
+  minimum_net_growth: 0.16
+
+  # Target type: 'net' (after returns) or 'gross' (before returns)
+  target_type: "net"
+
+  # Return rate assumptions by category (if not using actuals)
+  default_return_rate: 0.02  # 2% default return rate
+
+  # Growth allocation strategy: 'proportional', 'optimized', 'balanced'
+  # - proportional: Allocate growth proportionally to historical performance
+  # - optimized: Use optimization to maximize profit while hitting target
+  # - balanced: Balance growth across dimensions to reduce risk
+  allocation_strategy: "optimized"
+
+# ============================================================================
+# DIMENSIONAL TARGETS
+# ============================================================================
+dimensions:
+  # Product hierarchy targets
+  product:
+    # Category-level targets (if specific targets needed)
+    categories:
+      dog_food:
+        min_growth: 0.15      # 15% minimum
+        max_growth: 0.20      # 20% maximum
+        weight: 0.45          # 45% of total sales
+
+      cat_food:
+        min_growth: 0.14
+        max_growth: 0.19
+        weight: 0.30
+
+      treats:
+        min_growth: 0.18
+        max_growth: 0.25
+        weight: 0.15
+
+      supplements:
+        min_growth: 0.20
+        max_growth: 0.30
+        weight: 0.10
+
+    # Sub-group level flexibility
+    subgroup:
+      allow_negative_growth: false  # Don't allow declining sub-groups
+      min_growth: 0.00
+      max_growth: 0.50  # Cap at 50% for new/emerging products
+
+  # Geographic targets
+  geography:
+    regions:
+      # Example regions (customize based on your structure)
+      northeast:
+        weight: 0.25
+        growth_potential: "medium"  # low, medium, high
+
+      southeast:
+        weight: 0.30
+        growth_potential: "high"
+
+      midwest:
+        weight: 0.20
+        growth_potential: "medium"
+
+      west:
+        weight: 0.25
+        growth_potential: "high"
+
+    # Store/territory level
+    store_level:
+      min_stores_for_target: 5      # Minimum stores to set individual targets
+      aggregate_small_stores: true  # Group small stores together
+
+  # Channel targets
+  channels:
+    retail:
+      weight: 0.50          # 50% of sales
+      growth_rate: 0.12     # Lower growth (mature channel)
+
+    ecommerce:
+      weight: 0.30          # 30% of sales
+      growth_rate: 0.25     # Higher growth (growing channel)
+
+    wholesale:
+      weight: 0.15          # 15% of sales
+      growth_rate: 0.10     # Stable growth
+
+    distribution:
+      weight: 0.05          # 5% of sales
+      growth_rate: 0.15     # Moderate growth
+
+# ============================================================================
+# CONSTRAINT SETTINGS
+# ============================================================================
+constraints:
+  # Inventory capacity constraints
+  inventory:
+    enabled: true
+    # Maximum inventory as percentage of forecasted demand
+    max_inventory_ratio: 1.5      # 150% of forecast
+    # Minimum inventory (safety stock)
+    min_inventory_ratio: 0.20     # 20% safety stock
+    # Warehouse capacity limits by region
+    warehouse_capacity:
+      northeast: 1000000  # Units
+      southeast: 1200000
+      midwest: 800000
+      west: 1100000
+
+  # Distribution constraints
+  distribution:
+    enabled: true
+    # Maximum distribution capacity per channel
+    max_daily_shipments:
+      retail: 10000       # Units per day
+      ecommerce: 5000
+      wholesale: 15000
+      distribution: 8000
+    # Lead time constraints (days)
+    lead_times:
+      supplier: 14
+      warehouse: 3
+      last_mile: 2
+
+  # Budget constraints
+  budget:
+    enabled: true
+    # Marketing budget allocation (dollars)
+    marketing_budget: 5000000     # $5M
+    # Cost per acquisition targets by channel
+    max_cpa:
+      retail: 50          # $50 per customer
+      ecommerce: 30       # $30 per customer
+      wholesale: 100      # $100 per customer
+    # Promotional budget as % of revenue
+    promo_budget_pct: 0.05  # 5% of revenue
+
+  # Production constraints (if applicable)
+  production:
+    enabled: false
+    max_production_capacity: 10000000  # Units per year
+    production_lead_time: 30           # Days
+
+  # Pricing constraints
+  pricing:
+    enabled: true
+    # Price elasticity by category
+    elasticity:
+      dog_food: -1.2      # 1% price increase = 1.2% demand decrease
+      cat_food: -1.1
+      treats: -0.8
+      supplements: -0.6
+    # Maximum price increase year-over-year
+    max_price_increase: 0.08  # 8%
+
+# ============================================================================
+# OPTIMIZATION SETTINGS
+# ============================================================================
+optimization:
+  # Optimization objective: 'revenue', 'profit', 'units', 'balanced'
+  objective: "profit"
+
+  # Solver settings
+  solver:
+    method: "linear_programming"  # or "quadratic", "genetic_algorithm"
+    max_iterations: 10000
+    tolerance: 0.0001
+    timeout_seconds: 300  # 5 minutes
+
+  # Multi-objective weights (if objective = 'balanced')
+  multi_objective_weights:
+    revenue: 0.40       # 40% weight on revenue
+    profit: 0.40        # 40% weight on profit
+    growth: 0.20        # 20% weight on balanced growth
+
+  # Risk considerations
+  risk:
+    # Risk aversion factor (0 = risk-neutral, 1 = very risk-averse)
+    aversion: 0.3
+    # Diversification requirement (prevent over-concentration)
+    max_category_concentration: 0.50  # No category > 50% of growth
+    max_region_concentration: 0.40    # No region > 40% of growth
+    max_channel_concentration: 0.60   # No channel > 60% of growth
+
+# ============================================================================
+# DYNAMIC ADJUSTMENT SETTINGS
+# ============================================================================
+dynamic_adjustment:
+  # Rolling forecast settings
+  rolling_forecast:
+    enabled: true
+    window_months: 12           # 12-month rolling window
+    update_frequency: "monthly" # Update monthly
+    min_history_months: 24      # Need 24 months minimum history
+
+  # Variance-triggered adjustments
+  variance_triggers:
+    enabled: true
+    # Threshold for triggering target review (±10%)
+    threshold: 0.10
+    # Actions when threshold exceeded
+    actions:
+      - "alert_management"
+      - "recalculate_targets"
+      - "redistribute_growth"
+
+  # Automatic target reallocation
+  reallocation:
+    enabled: true
+    # Reallocate from underperforming to overperforming dimensions
+    transfer_threshold: 0.15    # If >15% off target, consider reallocation
+    max_transfer_pct: 0.25      # Max 25% of dimensional target can be moved
+
+  # Performance-based adjustments
+  performance_based:
+    enabled: true
+    # Adjust targets based on recent performance trend
+    lookback_months: 3          # Look at last 3 months
+    # If consistently outperforming, increase target by:
+    outperform_increase: 0.05   # 5%
+    # If consistently underperforming, decrease target by:
+    underperform_decrease: 0.03 # 3%
+
+# ============================================================================
+# SCENARIO PLANNING
+# ============================================================================
+scenarios:
+  # Enable scenario analysis
+  enabled: true
+
+  # Predefined scenarios
+  predefined:
+    # Best case scenario
+    best_case:
+      growth_rate: 0.22         # 22% growth
+      probability: 0.20         # 20% probability
+      assumptions:
+        - "Strong market conditions"
+        - "Successful new product launches"
+        - "Increased marketing effectiveness"
+
+    # Base case scenario (target)
+    base_case:
+      growth_rate: 0.16         # 16% growth
+      probability: 0.60         # 60% probability
+      assumptions:
+        - "Normal market conditions"
+        - "Moderate promotional activity"
+        - "Stable competition"
+
+    # Worst case scenario
+    worst_case:
+      growth_rate: 0.10         # 10% growth
+      probability: 0.20         # 20% probability
+      assumptions:
+        - "Economic downturn"
+        - "Increased competition"
+        - "Supply chain disruptions"
+
+  # Custom scenario settings
+  custom:
+    # Allow users to create custom scenarios
+    enabled: true
+    # Parameters that can be adjusted
+    adjustable_params:
+      - "growth_rate"
+      - "return_rate"
+      - "price_change"
+      - "market_share"
+      - "category_mix"
+      - "channel_mix"
+
+  # Monte Carlo simulation settings
+  monte_carlo:
+    enabled: true
+    n_simulations: 10000        # Number of simulations
+    confidence_levels: [0.10, 0.25, 0.50, 0.75, 0.90]  # Percentiles
+
+# ============================================================================
+# STOCKOUT IMPACT SETTINGS
+# ============================================================================
+stockout_impact:
+  # Enable stockout consideration in targets
+  enabled: true
+
+  # Stockout risk threshold (probability)
+  risk_threshold: 0.15          # 15% probability triggers action
+
+  # Impact on sales (% of lost sales)
+  lost_sales_rate: 0.80         # 80% of demand lost during stockout
+
+  # Customer switching behavior
+  customer_switching:
+    permanent_loss_rate: 0.20   # 20% of customers lost permanently
+    temporary_loss_rate: 0.50   # 50% lost temporarily
+
+  # Safety stock recommendations
+  safety_stock:
+    # Service level target
+    service_level: 0.95         # 95% service level
+    # Replenishment strategy
+    replenishment: "continuous"  # or "periodic"
+    # Review period (days)
+    review_period: 7
+
+  # Adjustment methodology
+  adjustment:
+    # Adjust targets downward if stockout risk high
+    reduce_target_if_high_risk: true
+    # Maximum target reduction
+    max_reduction: 0.10         # Max 10% reduction
+
+# ============================================================================
+# REPORTING & ALERTS
+# ============================================================================
+reporting:
+  # Target vs. actual tracking
+  tracking:
+    frequency: "weekly"         # weekly, monthly, quarterly
+    dimensions: ["category", "region", "channel"]
+    metrics:
+      - "actual_sales"
+      - "target_sales"
+      - "variance"
+      - "variance_pct"
+      - "ytd_actual"
+      - "ytd_target"
+      - "forecast_to_target"
+
+  # Alert thresholds
+  alerts:
+    # Trigger alerts when:
+    variance_alert_threshold: 0.10      # ±10% variance
+    consecutive_misses: 2               # 2 consecutive periods off target
+    ytd_variance_threshold: 0.05        # ±5% YTD variance
+
+  # Dashboard KPIs
+  kpis:
+    - name: "YTD Growth"
+      calculation: "(ytd_actual - ytd_baseline) / ytd_baseline"
+      target: 0.16
+
+    - name: "Target Achievement"
+      calculation: "ytd_actual / ytd_target"
+      target: 1.00
+
+    - name: "Net Growth (After Returns)"
+      calculation: "(gross_sales - returns) / baseline"
+      target: 0.16
+
+    - name: "Forecast Accuracy"
+      calculation: "1 - abs(actual - forecast) / actual"
+      target: 0.90

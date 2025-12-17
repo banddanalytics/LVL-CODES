@@ -1,0 +1,283 @@
+# ============================================================================
+# LVL-CODES: Git Ignore File
+# ============================================================================
+# This file specifies intentionally untracked files that Git should ignore
+# ============================================================================
+
+# ============================================================================
+# ENVIRONMENT & SECRETS
+# ============================================================================
+.env
+.env.local
+.env.*.local
+*.env
+secrets.yaml
+credentials.json
+
+# ============================================================================
+# PYTHON
+# ============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# ============================================================================
+# JUPYTER NOTEBOOK
+# ============================================================================
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
+
+# ============================================================================
+# DATA FILES (exclude actual data from version control)
+# ============================================================================
+
+# CSV files (exclude all by default, whitelist specific ones if needed)
+*.csv
+!example*.csv
+!sample*.csv
+
+# Excel files
+*.xlsx
+*.xls
+!template*.xlsx
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Parquet files
+*.parquet
+
+# HDF5 files
+*.h5
+*.hdf5
+
+# Pickle files (can contain sensitive data)
+*.pkl
+*.pickle
+
+# ============================================================================
+# MODEL FILES
+# ============================================================================
+models/saved_models/*.pkl
+models/saved_models/*.h5
+models/saved_models/*.joblib
+models/saved_models/*.pt
+models/saved_models/*.pth
+
+# MLflow
+mlruns/
+mlflow-artifacts/
+
+# ============================================================================
+# LOGS
+# ============================================================================
+logs/
+*.log
+*.log.*
+*.out
+
+# ============================================================================
+# OUTPUT DIRECTORIES
+# ============================================================================
+reports/*.pdf
+reports/*.html
+reports/*.xlsx
+backups/
+temp/
+tmp/
+output/
+cache/
+
+# ============================================================================
+# IDE & EDITORS
+# ============================================================================
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================================================
+# OPERATING SYSTEM
+# ============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ============================================================================
+# DOCUMENTATION BUILD
+# ============================================================================
+docs/_build/
+docs/_static/
+docs/_templates/
+site/
+
+# ============================================================================
+# TESTING
+# ============================================================================
+.tox/
+.coverage
+.pytest_cache/
+htmlcov/
+
+# ============================================================================
+# PACKAGE MANAGERS
+# ============================================================================
+node_modules/
+package-lock.json
+yarn.lock
+
+# ============================================================================
+# MISCELLANEOUS
+# ============================================================================
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Large files
+*.large
+
+# ============================================================================
+# PROJECT SPECIFIC
+# ============================================================================
+
+# Sample data (keep structure, not actual data)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+
+# Configuration backups
+config/*.backup
+config/*.bak
+
+# Exported targets
+data/targets/*.csv
+data/forecasts/*.csv
+
+# Dashboard assets (generated)
+src/dashboard/assets/cache/
+
+# ============================================================================
+# SECURITY SENSITIVE
+# ============================================================================
+*.key
+*.pem
+*.crt
+*.cer
+*.p12
+*.pfx
+ssh_keys/
+certificates/
+
+# ============================================================================
+# KEEP THESE FILES
+# ============================================================================
+# Use ! to negate ignore rules for files we want to keep
+
+!.gitkeep
+!.gitignore
+!README.md
+!LICENSE
+!requirements.txt
+!setup.py
+!.env.example
+
+# Keep example data
+!data/examples/
+!notebooks/examples/
